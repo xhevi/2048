@@ -45,6 +45,5 @@ class ScoreView : UIView, ScoreViewProtocol {
 
 // A simple view that displays several buttons for controlling the app
 class ControlView {
-  let defaultFrame = CGRect(x: 0, y: 0, width: 140, height: 40)
-  // TODO: Implement me
+    
 }

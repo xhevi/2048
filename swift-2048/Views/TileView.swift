@@ -13,7 +13,7 @@ class TileView : UIView {
   var value : Int = 0 {
     didSet {
       backgroundColor = delegate.tileColor(value)
-      numberLabel.textColor = delegate.numberColor(value)
+        numberLabel.textColor = delegate.numberColor(value)
       numberLabel.text = "\(value)"
     }
   }
@@ -29,9 +29,13 @@ class TileView : UIView {
     delegate = d
     numberLabel = UILabel(frame: CGRect(x: 0, y: 0, width: width, height: width))
     numberLabel.textAlignment = NSTextAlignment.center
-    numberLabel.minimumScaleFactor = 0.5
-    numberLabel.font = delegate.fontForNumbers()
-
+    if #available(iOS 8.2, *) {
+        numberLabel.font = UIFont.systemFont(ofSize: 25, weight: UIFontWeightBlack)
+    } else {
+        // Fallback on earlier versions
+        numberLabel.font = UIFont.systemFont(ofSize: 28)
+    }
+    
     super.init(frame: CGRect(x: position.x, y: position.y, width: width, height: width))
     addSubview(numberLabel)
     layer.cornerRadius = radius

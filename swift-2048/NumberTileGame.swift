@@ -23,11 +23,10 @@ class NumberTileGameViewController : UIViewController, GameModelProtocol {
 
   var scoreView: ScoreViewProtocol?
 
-  // Width of the gameboard
-  let boardWidth: CGFloat = 230.0
+  // Default width of the gameboard
+  let boardWidth: CGFloat = 375.0
   // How much padding to place between the tiles
-  let thinPadding: CGFloat = 3.0
-  let thickPadding: CGFloat = 6.0
+  let defaultPadding: CGFloat = 0.0
 
   // Amount of space to place between the different component views (gameboard, score view, etc)
   let viewPadding: CGFloat = 10.0
@@ -121,15 +120,17 @@ class NumberTileGameViewController : UIViewController, GameModelProtocol {
     scoreView.score = 0
 
     // Create the gameboard
-    let padding: CGFloat = dimension > 5 ? thinPadding : thickPadding
-    let v1 = boardWidth - padding*(CGFloat(dimension + 1))
-    let width: CGFloat = CGFloat(floorf(CFloat(v1)))/CGFloat(dimension)
+    let screenSize = UIScreen.main.bounds
+    let screenWidth = screenSize.width
+    let padding: CGFloat = defaultPadding
+    let boardWidth = screenWidth
+    let width: CGFloat = CGFloat(floorf(CFloat(boardWidth)))/CGFloat(dimension)
     let gameboard = GameboardView(dimension: dimension,
       tileWidth: width,
       tilePadding: padding,
-      cornerRadius: 6,
-      backgroundColor: UIColor.black,
-      foregroundColor: UIColor.darkGray)
+      cornerRadius: 0,
+      backgroundColor: UIColor.white,
+      foregroundColor: UIColor.white)
 
     // Set up the frames
     let views = [scoreView, gameboard]
