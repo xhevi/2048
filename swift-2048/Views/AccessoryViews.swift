@@ -9,7 +9,15 @@
 import UIKit
 
 
-// A simple view that displays several buttons for controlling the app
+// A simple view to display buttons for controlling the app
 class ControlView {
-    
+    let button = UIButton(frame: CGRect(x: 0, y: 0, width: 44, height: 44))
+    init () {
+        button.backgroundColor = UIColor(red: 255.0/255.0, green: 255.0/255.0, blue: 255.0/255.0, alpha: 0.5)
+        button.addTarget(self, action: #selector(resetButtonTapped), for: .touchUpInside)
+//        addSubview(button)
+    }
+    @objc func resetButtonTapped() {
+        print("Button pressed")
+    }
 }

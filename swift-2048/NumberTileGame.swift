@@ -120,7 +120,21 @@ class NumberTileGameViewController : UIViewController, GameModelProtocol {
     f.origin.y = yPositionToCenterView(gameboard)
     gameboard.frame = f
 
+    
+    // Reset game button
+    let button = UIButton(frame: CGRect(x: self.view.center.x-75/2, y: view.bounds.size.height-50, width: 75, height: 30))
+    if #available(iOS 8.2, *) {
+        button.titleLabel!.font =  UIFont.systemFont(ofSize: 17, weight: UIFontWeightHeavy)
+    } else {
+        // Fallback on earlier versions
+        button.titleLabel!.font =  UIFont.systemFont(ofSize: 17)
+    }
+    button.setTitle("restart", for: .normal)
+    button.setTitleColor(UIColor(red: 255.0/255.0, green: 255.0/255.0, blue: 255.0/255.0, alpha: 0.1), for: .normal)
+    button.addTarget(self, action: #selector(NumberTileGameViewController.reset), for: .touchUpInside)
+    view.addSubview(button)
 
+    
     // Add to game state
     view.addSubview(gameboard)
     board = gameboard
