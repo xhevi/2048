@@ -10,7 +10,6 @@ import UIKit
 
 /// A protocol that establishes a way for the game model to communicate with its parent view controller.
 protocol GameModelProtocol : class {
-  func scoreChanged(to score: Int)
   func moveOneTile(from: (Int, Int), to: (Int, Int), value: Int)
   func moveTwoTiles(from: ((Int, Int), (Int, Int)), to: (Int, Int), value: Int)
   func insertTile(at location: (Int, Int), withValue value: Int)
@@ -21,11 +20,6 @@ class GameModel : NSObject {
   let dimension : Int
   let threshold : Int
 
-  var score : Int = 0 {
-    didSet {
-      delegate.scoreChanged(to: score)
-    }
-  }
   var gameboard: SquareGameboard<TileObject>
 
   unowned let delegate : GameModelProtocol
@@ -48,7 +42,7 @@ class GameModel : NSObject {
 
   /// Reset the game state.
   func reset() {
-    score = 0
+    
     gameboard.setAll(to: .empty)
     queue.removeAll(keepingCapacity: true)
     timer.invalidate()
@@ -238,7 +232,7 @@ class GameModel : NSObject {
           let (sx, sy) = coords[s]
           let (dx, dy) = coords[d]
           if wasMerge {
-            score += v
+            // You may do something extra when it's a merge
           }
           gameboard[sx, sy] = TileObject.empty
           gameboard[dx, dy] = TileObject.tile(v)
@@ -248,7 +242,6 @@ class GameModel : NSObject {
           let (s1x, s1y) = coords[s1]
           let (s2x, s2y) = coords[s2]
           let (dx, dy) = coords[d]
-          score += v
           gameboard[s1x, s1y] = TileObject.empty
           gameboard[s2x, s2y] = TileObject.empty
           gameboard[dx, dy] = TileObject.tile(v)

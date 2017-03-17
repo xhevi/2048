@@ -21,14 +21,12 @@ class NumberTileGameViewController : UIViewController, GameModelProtocol {
   var board: GameboardView?
   var model: GameModel?
 
-  var scoreView: ScoreViewProtocol?
-
   // Default width of the gameboard
   let boardWidth: CGFloat = 375.0
   // How much padding to place between the tiles
   let defaultPadding: CGFloat = 0.0
 
-  // Amount of space to place between the different component views (gameboard, score view, etc)
+  // Amount of space to place between the different component views (gameboard, etc.)
   let viewPadding: CGFloat = 10.0
 
   // Amount that the vertical alignment of the component views should differ from if they were centered
@@ -96,29 +94,14 @@ class NumberTileGameViewController : UIViewController, GameModelProtocol {
       let tentativeX = 0.5*(vcWidth - viewWidth)
       return tentativeX >= 0 ? tentativeX : 0
     }
-    // This nested function provides the y-position for a component view
-    func yPositionForViewAtPosition(_ order: Int, views: [UIView]) -> CGFloat {
-      assert(views.count > 0)
-      assert(order >= 0 && order < views.count)
-//      let viewHeight = views[order].bounds.size.height
-      let totalHeight = CGFloat(views.count - 1)*viewPadding + views.map({ $0.bounds.size.height }).reduce(verticalViewOffset, { $0 + $1 })
-      let viewsTop = 0.5*(vcHeight - totalHeight) >= 0 ? 0.5*(vcHeight - totalHeight) : 0
-
-      // Not sure how to slice an array yet
-      var acc: CGFloat = 0
-      for i in 0..<order {
-        acc += viewPadding + views[i].bounds.size.height
-      }
-      return viewsTop + acc
+    
+    // This nested function provides the x-position for a component view
+    func yPositionToCenterView(_ v: UIView) -> CGFloat {
+        let viewHeight = v.bounds.size.height
+        let tentativeY = 0.5*(vcHeight - viewHeight)
+        return tentativeY >= 0 ? tentativeY : 0
     }
-
-    // Create the score view
-    let scoreView = ScoreView(backgroundColor: UIColor.black,
-      textColor: UIColor.white,
-      font: UIFont(name: "HelveticaNeue-Bold", size: 16.0) ?? UIFont.systemFont(ofSize: 16.0),
-      radius: 6)
-    scoreView.score = 0
-
+    
     // Create the gameboard
     let screenSize = UIScreen.main.bounds
     let screenWidth = screenSize.width
@@ -132,25 +115,15 @@ class NumberTileGameViewController : UIViewController, GameModelProtocol {
       backgroundColor: UIColor.white,
       foregroundColor: UIColor.white)
 
-    // Set up the frames
-    let views = [scoreView, gameboard]
-
-    var f = scoreView.frame
-    f.origin.x = xPositionToCenterView(scoreView)
-    f.origin.y = yPositionForViewAtPosition(0, views: views)
-    scoreView.frame = f
-
-    f = gameboard.frame
+    var f = gameboard.frame
     f.origin.x = xPositionToCenterView(gameboard)
-    f.origin.y = yPositionForViewAtPosition(1, views: views)
+    f.origin.y = yPositionToCenterView(gameboard)
     gameboard.frame = f
 
 
     // Add to game state
     view.addSubview(gameboard)
     board = gameboard
-    view.addSubview(scoreView)
-    self.scoreView = scoreView
 
     assert(model != nil)
     let m = model!
@@ -237,15 +210,6 @@ class NumberTileGameViewController : UIViewController, GameModelProtocol {
           self.followUp()
         }
       })
-  }
-
-  // Protocol
-  func scoreChanged(to score: Int) {
-    if scoreView == nil {
-      return
-    }
-    let s = scoreView!
-    s.scoreChanged(to: score)
   }
 
   func moveOneTile(from: (Int, Int), to: (Int, Int), value: Int) {
