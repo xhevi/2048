@@ -37,7 +37,7 @@ class NumberTileGameViewController : UIViewController, GameModelProtocol {
     threshold = t > 8 ? t : 8
     super.init(nibName: nil, bundle: nil)
     model = GameModel(dimension: dimension, threshold: threshold, delegate: self)
-    view.backgroundColor = UIColor.white
+    view.backgroundColor = UIColor.black
     setupSwipeControls()
   }
 
@@ -112,8 +112,8 @@ class NumberTileGameViewController : UIViewController, GameModelProtocol {
       tileWidth: width,
       tilePadding: padding,
       cornerRadius: 0,
-      backgroundColor: UIColor.white,
-      foregroundColor: UIColor.white)
+      backgroundColor: UIColor(red: 0/255.0, green: 0/255.0, blue: 0/255.0, alpha: 0.0),
+      foregroundColor: UIColor(red: 0/255.0, green: 0/255.0, blue: 0/255.0, alpha: 0.0))
 
     var f = gameboard.frame
     f.origin.x = xPositionToCenterView(gameboard)

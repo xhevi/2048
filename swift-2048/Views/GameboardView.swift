@@ -71,7 +71,7 @@ class GameboardView : UIView {
         let background = UIView(frame: CGRect(x: xCursor, y: yCursor, width: tileWidth, height: tileWidth))
         background.layer.cornerRadius = bgRadius
         background.backgroundColor = tileColor
-        background.layer.borderColor = UIColor(red: 200.0/255.0, green: 199.0/255.0, blue: 204.0/255.0, alpha: 0.5).cgColor
+        background.layer.borderColor = UIColor(red: 255.0/255.0, green: 255.0/255.0, blue: 255.0/255.0, alpha: 0.2).cgColor
         background.layer.borderWidth = 0.5
         addSubview(background)
         yCursor += tilePadding + tileWidth
