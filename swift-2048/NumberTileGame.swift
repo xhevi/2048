@@ -131,7 +131,7 @@ class NumberTileGameViewController : UIViewController, GameModelProtocol {
     }
     resetButton.setTitle("restart", for: .normal)
     resetButton.setTitleColor(UIColor(red: 45.0/255.0, green: 45.0/255.0, blue: 45.0/255.0, alpha: 0.6), for: .normal)
-    resetButton.setTitleColor(UIColor(red: 255.0/255.0, green: 255.0/255.0, blue: 255.0/255.0, alpha: 0.8), for: .highlighted)
+    resetButton.setTitleColor(UIColor(red: 255.0/255.0, green: 255.0/255.0, blue: 255.0/255.0, alpha: 0.6), for: .highlighted)
     resetButton.contentEdgeInsets = UIEdgeInsetsMake(20,0,0,20)
     resetButton.addTarget(self, action: #selector(NumberTileGameViewController.reset), for: .touchUpInside)
     view.addSubview(resetButton)
@@ -152,17 +152,25 @@ class NumberTileGameViewController : UIViewController, GameModelProtocol {
     assert(model != nil)
     let m = model!
     let (userWon, _) = m.userHasWon()
+    
+    var youLost: [String] = ["🤦‍♂️", "🤦‍♀️", "🤦🏿‍♂️", "🤦🏿‍♀️", "🤦🏾‍♂️", "🤦🏾‍♀️", "🙊", "💩", "😢", "👎", "😩", "😿", "👻", "👾", "🐒", "🐣", "🆘", "💔", "🔥", "🕸", "🍌", "🔫", "🥊", "🏳️", "🔨", "🤕", "🤢", "🐭", "⛄️", "🚧"]
+    var youWon: [String] = ["🥇", "🎯", "🎰", "🏆", "❤️", "🌈", "⚡️", "💵", "🎉", "🏁", "🦄", "🍾", "🍻", "🤸‍♂️", "😇"]
+    
+    var youLostMsg: [String] = ["Sorry!", "Dang!", "Crap!", "Grrrr!", "Sh*t!", "Jeez!", "Oh no!", "Poo!", "Nice game!", "Darn!"]
+    var youWonMsg: [String] = ["Respectz!", "Boom!", "Wot!", "Rockin!", "You rulez!", "Awesome!"]
+    
     if userWon {
       // TODO: alert delegate we won
       let alertView = UIAlertView()
-      alertView.title = "You win!"
-      alertView.message = "Respect :)"
-      alertView.addButton(withTitle: "Thanks")
+      alertView.title = "Yay, you won! \(youWon[Int(arc4random_uniform(UInt32(youWon.count)))])"
+      alertView.message = "\(youWonMsg[Int(arc4random_uniform(UInt32(youWonMsg.count)))])"
+      alertView.addButton(withTitle: "Thanks \(youWon[Int(arc4random_uniform(UInt32(youWon.count)))])")
       alertView.show()
       // TODO: At this point we should stall the game until the user taps 'New Game' (which hasn't been implemented yet)
       return
     }
 
+    
     // Now, insert more tiles
     let randomVal = Int(arc4random_uniform(10))
     m.insertTileAtRandomLocation(withValue: randomVal == 1 ? 4 : 2)
@@ -171,9 +179,9 @@ class NumberTileGameViewController : UIViewController, GameModelProtocol {
     if m.userHasLost() {
       // TODO: alert delegate we lost
       let alertView = UIAlertView()
-      alertView.title = "You lost!"
-      alertView.message = "Sorry :("
-      alertView.addButton(withTitle: "OK")
+      alertView.title = "Ouch, you lost! \(youLost[Int(arc4random_uniform(UInt32(youLost.count)))])"
+      alertView.message = "\(youLostMsg[Int(arc4random_uniform(UInt32(youLostMsg.count)))])"
+      alertView.addButton(withTitle: "No worries \(youLost[Int(arc4random_uniform(UInt32(youLost.count)))])")
       alertView.show()
     }
   }
