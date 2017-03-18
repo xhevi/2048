@@ -122,16 +122,16 @@ class NumberTileGameViewController : UIViewController, GameModelProtocol {
 
     
     // Reset game button
-    let resetButton = UIButton(frame: CGRect(x: view.bounds.size.width-75, y: view.bounds.size.height-50, width: 95, height: 50))
+    let resetButton = UIButton(frame: CGRect(x: view.bounds.size.width-75, y: view.bounds.size.height-50, width: 85, height: 50))
     if #available(iOS 8.2, *) {
-        resetButton.titleLabel!.font =  UIFont.systemFont(ofSize: 17, weight: UIFontWeightHeavy)
+        resetButton.titleLabel!.font =  UIFont.systemFont(ofSize: 20, weight: UIFontWeightLight)
     } else {
         // Fallback on earlier versions
-        resetButton.titleLabel!.font =  UIFont.systemFont(ofSize: 17)
+        resetButton.titleLabel!.font =  UIFont.systemFont(ofSize: 18)
     }
     resetButton.setTitle("restart", for: .normal)
     resetButton.setTitleColor(UIColor(red: 45.0/255.0, green: 45.0/255.0, blue: 45.0/255.0, alpha: 0.6), for: .normal)
-    resetButton.setTitleColor(UIColor(red: 255.0/255.0, green: 255.0/255.0, blue: 255.0/255.0, alpha: 0.6), for: .highlighted)
+    resetButton.setTitleColor(UIColor(red: 255.0/255.0, green: 255.0/255.0, blue: 255.0/255.0, alpha: 0.8), for: .highlighted)
     resetButton.contentEdgeInsets = UIEdgeInsetsMake(20,0,0,20)
     resetButton.addTarget(self, action: #selector(NumberTileGameViewController.reset), for: .touchUpInside)
     view.addSubview(resetButton)
