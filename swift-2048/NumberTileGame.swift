@@ -17,6 +17,9 @@ class NumberTileGameViewController : UIViewController, GameModelProtocol {
   var dimension: Int
   // The value of the winning tile
   var threshold: Int
+    
+  // Holding game state before gameover
+    var gameover: Bool = false
 
   var board: GameboardView?
   var model: GameModel?
@@ -78,11 +81,51 @@ class NumberTileGameViewController : UIViewController, GameModelProtocol {
     assert(board != nil && model != nil)
     let b = board!
     let m = model!
+    gameover = false
     b.reset()
     m.reset()
     m.insertTileAtRandomLocation(withValue: 2)
     m.insertTileAtRandomLocation(withValue: 2)
+    timer.invalidate()
+    time = gameSettings.gameTime
+    timerLabel.text = gameSettings.gameTimeText
+    runTimer()
+    resetButton.setTitleColor(UIColor(red: 45.0/255.0, green: 45.0/255.0, blue: 45.0/255.0, alpha: 0.6), for: .normal)
+    timerLabel.textColor = UIColor(red: 255.0/255.0, green: 255.0/255.0, blue: 255.0/255.0, alpha: 0.6)
   }
+    
+    
+    // Reset button
+    let resetButton = UIButton(frame: CGRect(x: 0, y: 0, width: 85, height: 50))
+    
+    
+    
+    // Countdown timer
+    var time = gameSettings.gameTime
+    var timer = Timer()
+    let timerLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 90, height: 30))
+    func updateTimer() {
+        time -= 1
+        if (time == 0) {
+            gameover = true
+            timer.invalidate()
+            timerLabel.text = "game over"
+            timerLabel.textColor = UIColor(red: 45.0/255.0, green: 45.0/255.0, blue: 45.0/255.0, alpha: 0.6)
+            self.followUpLost(msg: "time's up")
+            return
+        }
+        timerLabel.text = timeString(time: TimeInterval(time))
+    }
+    func runTimer() {
+        timer = Timer.scheduledTimer(timeInterval: 1, target: self,   selector: (#selector(updateTimer)), userInfo: nil, repeats: true)
+    }
+    func timeString(time:TimeInterval) -> String {
+        let minutes = Int(time) / 60 % 60
+        let seconds = Int(time) % 60
+        return String(format:"%i:%02i", minutes, seconds)
+    }
+    
+    
 
   func setupGame() {
     let vcHeight = view.bounds.size.height
@@ -102,6 +145,7 @@ class NumberTileGameViewController : UIViewController, GameModelProtocol {
         return tentativeY >= 0 ? tentativeY : 0
     }
     
+    
     // Create the gameboard
     let screenSize = UIScreen.main.bounds
     let screenWidth = screenSize.width
@@ -120,15 +164,32 @@ class NumberTileGameViewController : UIViewController, GameModelProtocol {
     f.origin.y = yPositionToCenterView(gameboard)
     gameboard.frame = f
 
-    
-    // Reset game button
-    let resetButton = UIButton(frame: CGRect(x: view.bounds.size.width-75, y: view.bounds.size.height-50, width: 85, height: 50))
+    // Countdown timer styling and adding to view and starting it
+    timerLabel.textAlignment = .left
+    timerLabel.textColor = UIColor(red: 255.0/255.0, green: 255.0/255.0, blue: 255.0/255.0, alpha: 0.6)
+    timerLabel.text = gameSettings.gameTimeText
+    timerLabel.frame.origin.x = 10
+    timerLabel.frame.origin.y = view.bounds.size.height-30
     if #available(iOS 8.2, *) {
-        resetButton.titleLabel!.font =  UIFont.systemFont(ofSize: 20, weight: UIFontWeightLight)
+        timerLabel.font =  UIFont.systemFont(ofSize: 17, weight: UIFontWeightHeavy)
+    } else {
+        // Fallback on earlier versions
+        timerLabel.font =  UIFont.systemFont(ofSize: 18)
+    }
+    view.addSubview(timerLabel)
+    runTimer()
+    
+    
+    
+    // Reset game button styling and adding to view
+    if #available(iOS 8.2, *) {
+        resetButton.titleLabel!.font =  UIFont.systemFont(ofSize: 17, weight: UIFontWeightHeavy)
     } else {
         // Fallback on earlier versions
         resetButton.titleLabel!.font =  UIFont.systemFont(ofSize: 18)
     }
+    resetButton.frame.origin.x = view.bounds.size.width-75
+    resetButton.frame.origin.y = view.bounds.size.height-50
     resetButton.setTitle("restart", for: .normal)
     resetButton.setTitleColor(UIColor(red: 45.0/255.0, green: 45.0/255.0, blue: 45.0/255.0, alpha: 0.6), for: .normal)
     resetButton.setTitleColor(UIColor(red: 255.0/255.0, green: 255.0/255.0, blue: 255.0/255.0, alpha: 0.6), for: .highlighted)
@@ -146,6 +207,35 @@ class NumberTileGameViewController : UIViewController, GameModelProtocol {
     m.insertTileAtRandomLocation(withValue: 2)
     m.insertTileAtRandomLocation(withValue: 2)
   }
+    
+    
+    
+    // Functions when user wins or loses
+    var youLost: [String] = ["🤦‍♂️", "🤦‍♀️", "🤦🏿‍♂️", "🤦🏿‍♀️", "🤦🏾‍♂️", "🤦🏾‍♀️", "🙊", "💩", "😢", "👎", "😩", "😿", "👻", "👾", "🐒", "🐣", "🆘", "💔", "🔥", "🕸", "🍌", "🔫", "🥊", "🏳️", "🔨", "🤕", "🤢", "🐭", "⛄️", "🚧"]
+    var youWon: [String] = ["🥇", "🎯", "🎰", "🏆", "❤️", "🌈", "⚡️", "💵", "🎉", "🏁", "🦄", "🍾", "🍻", "🤸‍♂️", "😇"]
+    //    var youWonMsg: [String] = ["Respectz!", "Boom!", "Wot!", "Rockin!", "You rulez!", "Awesome!"]
+    
+    func followUpLost(msg: String) {
+        // TODO: alert delegate we lost
+        let alertView = UIAlertView()
+        alertView.title = "Ouch, \(msg)! \(youLost[Int(arc4random_uniform(UInt32(youLost.count)))])"
+              alertView.message = "You lost, sorry..."
+        alertView.addButton(withTitle: "No worries")
+        alertView.show()
+         resetButton.setTitleColor(UIColor(red: 255.0/255.0, green: 255.0/255.0, blue: 255.0/255.0, alpha: 0.6), for: .normal)
+    }
+    
+    func followUpWon() {
+        // TODO: alert delegate we won
+        let alertView = UIAlertView()
+        alertView.title = "Wow, you won! \(youWon[Int(arc4random_uniform(UInt32(youWon.count)))])"
+              alertView.message = "Respectz, you're a genius..."
+        alertView.addButton(withTitle: "Thanks")
+        alertView.show()
+        // TODO: At this point we should stall the game until the user taps 'New Game' (which hasn't been implemented yet)
+        resetButton.setTitleColor(UIColor(red: 255.0/255.0, green: 255.0/255.0, blue: 255.0/255.0, alpha: 0.6), for: .normal)
+        return
+    }
 
   // Misc
   func followUp() {
@@ -153,21 +243,8 @@ class NumberTileGameViewController : UIViewController, GameModelProtocol {
     let m = model!
     let (userWon, _) = m.userHasWon()
     
-    var youLost: [String] = ["🤦‍♂️", "🤦‍♀️", "🤦🏿‍♂️", "🤦🏿‍♀️", "🤦🏾‍♂️", "🤦🏾‍♀️", "🙊", "💩", "😢", "👎", "😩", "😿", "👻", "👾", "🐒", "🐣", "🆘", "💔", "🔥", "🕸", "🍌", "🔫", "🥊", "🏳️", "🔨", "🤕", "🤢", "🐭", "⛄️", "🚧"]
-    var youWon: [String] = ["🥇", "🎯", "🎰", "🏆", "❤️", "🌈", "⚡️", "💵", "🎉", "🏁", "🦄", "🍾", "🍻", "🤸‍♂️", "😇"]
-    
-//    var youLostMsg: [String] = ["Sorry!", "Dang!", "Crap!", "Grrrr!", "Sh*t!", "Jeez!", "Oh no!", "Poo!", "Nice game!", "Darn!"]
-//    var youWonMsg: [String] = ["Respectz!", "Boom!", "Wot!", "Rockin!", "You rulez!", "Awesome!"]
-    
     if userWon {
-      // TODO: alert delegate we won
-      let alertView = UIAlertView()
-      alertView.title = "Yay, you won! \(youWon[Int(arc4random_uniform(UInt32(youWon.count)))])"
-//      alertView.message = "\(youWonMsg[Int(arc4random_uniform(UInt32(youWonMsg.count)))])"
-      alertView.addButton(withTitle: "Thanks")
-      alertView.show()
-      // TODO: At this point we should stall the game until the user taps 'New Game' (which hasn't been implemented yet)
-      return
+      followUpWon()
     }
 
     
@@ -177,18 +254,14 @@ class NumberTileGameViewController : UIViewController, GameModelProtocol {
 
     // At this point, the user may lose
     if m.userHasLost() {
-      // TODO: alert delegate we lost
-      let alertView = UIAlertView()
-      alertView.title = "Ouch, you lost! \(youLost[Int(arc4random_uniform(UInt32(youLost.count)))])"
-//      alertView.message = "\(youLostMsg[Int(arc4random_uniform(UInt32(youLostMsg.count)))])"
-      alertView.addButton(withTitle: "No worries")
-      alertView.show()
+        followUpLost(msg: "no more moves")
     }
   }
 
   // Commands
   @objc(up:)
   func upCommand(_ r: UIGestureRecognizer!) {
+    if gameover {return} // Ignore when game is over
     assert(model != nil)
     let m = model!
     m.queueMove(direction: MoveDirection.up,
@@ -201,6 +274,7 @@ class NumberTileGameViewController : UIViewController, GameModelProtocol {
 
   @objc(down:)
   func downCommand(_ r: UIGestureRecognizer!) {
+    if gameover {return} // Ignore when game is over
     assert(model != nil)
     let m = model!
     m.queueMove(direction: MoveDirection.down,
@@ -213,6 +287,7 @@ class NumberTileGameViewController : UIViewController, GameModelProtocol {
 
   @objc(left:)
   func leftCommand(_ r: UIGestureRecognizer!) {
+    if gameover {return} // Ignore when game is over
     assert(model != nil)
     let m = model!
     m.queueMove(direction: MoveDirection.left,
@@ -225,6 +300,7 @@ class NumberTileGameViewController : UIViewController, GameModelProtocol {
 
   @objc(right:)
   func rightCommand(_ r: UIGestureRecognizer!) {
+    if gameover {return} // Ignore when game is over
     assert(model != nil)
     let m = model!
     m.queueMove(direction: MoveDirection.right,
