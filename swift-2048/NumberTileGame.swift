@@ -95,7 +95,7 @@ class NumberTileGameViewController : UIViewController, GameModelProtocol {
       return tentativeX >= 0 ? tentativeX : 0
     }
     
-    // This nested function provides the x-position for a component view
+    // This nested function provides the y-position for a component view
     func yPositionToCenterView(_ v: UIView) -> CGFloat {
         let viewHeight = v.bounds.size.height
         let tentativeY = 0.5*(vcHeight - viewHeight)
@@ -109,7 +109,7 @@ class NumberTileGameViewController : UIViewController, GameModelProtocol {
     let boardWidth = screenWidth
     let width: CGFloat = CGFloat(floorf(CFloat(boardWidth)))/CGFloat(dimension)
     let gameboard = GameboardView(dimension: dimension,
-      tileWidth: width,
+      tileWidth: width-0.05, // substract the tile border
       tilePadding: padding,
       cornerRadius: 0,
       backgroundColor: UIColor(red: 0/255.0, green: 0/255.0, blue: 0/255.0, alpha: 0.0),
@@ -122,17 +122,19 @@ class NumberTileGameViewController : UIViewController, GameModelProtocol {
 
     
     // Reset game button
-    let button = UIButton(frame: CGRect(x: self.view.center.x-75/2, y: view.bounds.size.height-50, width: 75, height: 30))
+    let resetButton = UIButton(frame: CGRect(x: view.bounds.size.width-75, y: view.bounds.size.height-50, width: 95, height: 50))
     if #available(iOS 8.2, *) {
-        button.titleLabel!.font =  UIFont.systemFont(ofSize: 17, weight: UIFontWeightHeavy)
+        resetButton.titleLabel!.font =  UIFont.systemFont(ofSize: 17, weight: UIFontWeightHeavy)
     } else {
         // Fallback on earlier versions
-        button.titleLabel!.font =  UIFont.systemFont(ofSize: 17)
+        resetButton.titleLabel!.font =  UIFont.systemFont(ofSize: 17)
     }
-    button.setTitle("restart", for: .normal)
-    button.setTitleColor(UIColor(red: 255.0/255.0, green: 255.0/255.0, blue: 255.0/255.0, alpha: 0.1), for: .normal)
-    button.addTarget(self, action: #selector(NumberTileGameViewController.reset), for: .touchUpInside)
-    view.addSubview(button)
+    resetButton.setTitle("restart", for: .normal)
+    resetButton.setTitleColor(UIColor(red: 45.0/255.0, green: 45.0/255.0, blue: 45.0/255.0, alpha: 0.6), for: .normal)
+    resetButton.setTitleColor(UIColor(red: 255.0/255.0, green: 255.0/255.0, blue: 255.0/255.0, alpha: 0.6), for: .highlighted)
+    resetButton.contentEdgeInsets = UIEdgeInsetsMake(20,0,0,20)
+    resetButton.addTarget(self, action: #selector(NumberTileGameViewController.reset), for: .touchUpInside)
+    view.addSubview(resetButton)
 
     
     // Add to game state
@@ -153,9 +155,9 @@ class NumberTileGameViewController : UIViewController, GameModelProtocol {
     if userWon {
       // TODO: alert delegate we won
       let alertView = UIAlertView()
-      alertView.title = "Victory"
-      alertView.message = "You won!"
-      alertView.addButton(withTitle: "Cancel")
+      alertView.title = "You win!"
+      alertView.message = "Respect :)"
+      alertView.addButton(withTitle: "Thanks")
       alertView.show()
       // TODO: At this point we should stall the game until the user taps 'New Game' (which hasn't been implemented yet)
       return
@@ -168,11 +170,10 @@ class NumberTileGameViewController : UIViewController, GameModelProtocol {
     // At this point, the user may lose
     if m.userHasLost() {
       // TODO: alert delegate we lost
-      NSLog("You lost...")
       let alertView = UIAlertView()
-      alertView.title = "Defeat"
-      alertView.message = "You lost..."
-      alertView.addButton(withTitle: "Cancel")
+      alertView.title = "You lost!"
+      alertView.message = "Sorry :("
+      alertView.addButton(withTitle: "OK")
       alertView.show()
     }
   }
