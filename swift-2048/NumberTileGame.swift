@@ -156,15 +156,15 @@ class NumberTileGameViewController : UIViewController, GameModelProtocol {
     var youLost: [String] = ["🤦‍♂️", "🤦‍♀️", "🤦🏿‍♂️", "🤦🏿‍♀️", "🤦🏾‍♂️", "🤦🏾‍♀️", "🙊", "💩", "😢", "👎", "😩", "😿", "👻", "👾", "🐒", "🐣", "🆘", "💔", "🔥", "🕸", "🍌", "🔫", "🥊", "🏳️", "🔨", "🤕", "🤢", "🐭", "⛄️", "🚧"]
     var youWon: [String] = ["🥇", "🎯", "🎰", "🏆", "❤️", "🌈", "⚡️", "💵", "🎉", "🏁", "🦄", "🍾", "🍻", "🤸‍♂️", "😇"]
     
-    var youLostMsg: [String] = ["Sorry!", "Dang!", "Crap!", "Grrrr!", "Sh*t!", "Jeez!", "Oh no!", "Poo!", "Nice game!", "Darn!"]
-    var youWonMsg: [String] = ["Respectz!", "Boom!", "Wot!", "Rockin!", "You rulez!", "Awesome!"]
+//    var youLostMsg: [String] = ["Sorry!", "Dang!", "Crap!", "Grrrr!", "Sh*t!", "Jeez!", "Oh no!", "Poo!", "Nice game!", "Darn!"]
+//    var youWonMsg: [String] = ["Respectz!", "Boom!", "Wot!", "Rockin!", "You rulez!", "Awesome!"]
     
     if userWon {
       // TODO: alert delegate we won
       let alertView = UIAlertView()
       alertView.title = "Yay, you won! \(youWon[Int(arc4random_uniform(UInt32(youWon.count)))])"
-      alertView.message = "\(youWonMsg[Int(arc4random_uniform(UInt32(youWonMsg.count)))])"
-      alertView.addButton(withTitle: "Thanks \(youWon[Int(arc4random_uniform(UInt32(youWon.count)))])")
+//      alertView.message = "\(youWonMsg[Int(arc4random_uniform(UInt32(youWonMsg.count)))])"
+      alertView.addButton(withTitle: "Thanks")
       alertView.show()
       // TODO: At this point we should stall the game until the user taps 'New Game' (which hasn't been implemented yet)
       return
@@ -180,8 +180,8 @@ class NumberTileGameViewController : UIViewController, GameModelProtocol {
       // TODO: alert delegate we lost
       let alertView = UIAlertView()
       alertView.title = "Ouch, you lost! \(youLost[Int(arc4random_uniform(UInt32(youLost.count)))])"
-      alertView.message = "\(youLostMsg[Int(arc4random_uniform(UInt32(youLostMsg.count)))])"
-      alertView.addButton(withTitle: "No worries \(youLost[Int(arc4random_uniform(UInt32(youLost.count)))])")
+//      alertView.message = "\(youLostMsg[Int(arc4random_uniform(UInt32(youLostMsg.count)))])"
+      alertView.addButton(withTitle: "No worries")
       alertView.show()
     }
   }

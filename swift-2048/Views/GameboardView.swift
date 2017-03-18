@@ -20,12 +20,13 @@ class GameboardView : UIView {
   let tilePopStartScale: CGFloat = 0.1
   let tilePopMaxScale: CGFloat = 1.1
   let tilePopDelay: TimeInterval = 0.05
-  let tileExpandTime: TimeInterval = 0.18
+  let tileExpandTime: TimeInterval = 0.08
   let tileContractTime: TimeInterval = 0.08
 
   let tileMergeStartScale: CGFloat = 1.0
-  let tileMergeExpandTime: TimeInterval = 0.08
-  let tileMergeContractTime: TimeInterval = 0.08
+  let tileMergePopMaxScale: CGFloat = 1.8
+  let tileMergeExpandTime: TimeInterval = 0.18
+  let tileMergeContractTime: TimeInterval = 0.18
 
   let perSquareSlideDuration: TimeInterval = 0.08
 
@@ -95,7 +96,7 @@ class GameboardView : UIView {
     tiles[IndexPath(row: row, section: col)] = tile
 
     // Add to board
-    UIView.animate(withDuration: tileExpandTime, delay: tilePopDelay, options: UIViewAnimationOptions(),
+    UIView.animate(withDuration: tileExpandTime, delay: tilePopDelay, usingSpringWithDamping: 1.0, initialSpringVelocity: 1.0, options: UIViewAnimationOptions(),
       animations: {
         // Make the tile 'pop'
         tile.layer.setAffineTransform(CGAffineTransform(scaleX: self.tilePopMaxScale, y: self.tilePopMaxScale))
@@ -136,7 +137,7 @@ class GameboardView : UIView {
     let shouldPop = endTile != nil
     UIView.animate(withDuration: perSquareSlideDuration,
       delay: 0.0,
-      options: UIViewAnimationOptions.beginFromCurrentState,
+      options: UIViewAnimationOptions.beginFromCurrentState, 
       animations: {
         // Slide tile
         tile.frame = finalFrame
@@ -151,11 +152,12 @@ class GameboardView : UIView {
         // Pop tile
         UIView.animate(withDuration: self.tileMergeExpandTime,
           animations: {
-            tile.layer.setAffineTransform(CGAffineTransform(scaleX: self.tilePopMaxScale, y: self.tilePopMaxScale))
+            tile.layer.setAffineTransform(CGAffineTransform(scaleX: self.tileMergePopMaxScale, y: self.tileMergePopMaxScale))
           },
           completion: { finished in
             // Contract tile to original size
-            UIView.animate(withDuration: self.tileMergeContractTime, animations: {
+            UIView.animate(withDuration: self.tileMergeContractTime, delay: 0.0,
+                           options: UIViewAnimationOptions.curveEaseIn, animations: {
               tile.layer.setAffineTransform(CGAffineTransform.identity)
             }) 
         })
