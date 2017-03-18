@@ -16,4 +16,4 @@ class Settings {
         self.gameTimeText = gameTimeText
     }
 }
-var gameSettings = Settings(gameTime: 10, gameTimeText: "0:10")
+var gameSettings = Settings(gameTime: 600, gameTimeText: "10:00")
