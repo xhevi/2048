@@ -96,14 +96,14 @@ class NumberTileGameViewController : UIViewController, GameModelProtocol {
     
     
     // Reset button
-    let resetButton = UIButton(frame: CGRect(x: 0, y: 0, width: 85, height: 50))
+    let resetButton = UIButton(frame: CGRect(x: 0, y: 0, width: 90, height: 50))
     
     
     
     // Countdown timer
     var time = gameSettings.gameTime
     var timer = Timer()
-    let timerLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 90, height: 30))
+    let timerLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 110, height: 30))
     func updateTimer() {
         time -= 1
         if (time == 0) {
@@ -166,34 +166,58 @@ class NumberTileGameViewController : UIViewController, GameModelProtocol {
 
     // Countdown timer styling and adding to view and starting it
     timerLabel.textAlignment = .left
+    timerLabel.adjustsFontSizeToFitWidth = true;
     timerLabel.textColor = UIColor(red: 255.0/255.0, green: 255.0/255.0, blue: 255.0/255.0, alpha: 0.6)
     timerLabel.text = gameSettings.gameTimeText
     timerLabel.frame.origin.x = 10
     timerLabel.frame.origin.y = view.bounds.size.height-30
-    if #available(iOS 8.2, *) {
-        timerLabel.font =  UIFont.systemFont(ofSize: 17, weight: UIFontWeightHeavy)
+    if (UIDevice.current.userInterfaceIdiom == .pad) {
+        if #available(iOS 8.2, *) {
+            timerLabel.font =  UIFont.systemFont(ofSize: 37, weight: UIFontWeightHeavy)
+        } else {
+            // Fallback on earlier versions
+            timerLabel.font =  UIFont.systemFont(ofSize: 37)
+        }
     } else {
-        // Fallback on earlier versions
-        timerLabel.font =  UIFont.systemFont(ofSize: 18)
+        if #available(iOS 8.2, *) {
+            timerLabel.font =  UIFont.systemFont(ofSize: 17, weight: UIFontWeightHeavy)
+        } else {
+            // Fallback on earlier versions
+            timerLabel.font =  UIFont.systemFont(ofSize: 18)
+        }
     }
+
+    
     view.addSubview(timerLabel)
     runTimer()
     
     
     
     // Reset game button styling and adding to view
-    if #available(iOS 8.2, *) {
-        resetButton.titleLabel!.font =  UIFont.systemFont(ofSize: 17, weight: UIFontWeightHeavy)
+    if (UIDevice.current.userInterfaceIdiom == .pad) {
+        if #available(iOS 8.2, *) {
+            resetButton.titleLabel!.font =  UIFont.systemFont(ofSize: 37, weight: UIFontWeightHeavy)
+        } else {
+            // Fallback on earlier versions
+            resetButton.titleLabel!.font =  UIFont.systemFont(ofSize: 37)
+        }
     } else {
-        // Fallback on earlier versions
-        resetButton.titleLabel!.font =  UIFont.systemFont(ofSize: 18)
+        if #available(iOS 8.2, *) {
+            resetButton.titleLabel!.font =  UIFont.systemFont(ofSize: 17, weight: UIFontWeightHeavy)
+        } else {
+            // Fallback on earlier versions
+            resetButton.titleLabel!.font =  UIFont.systemFont(ofSize: 18)
+        }
     }
-    resetButton.frame.origin.x = view.bounds.size.width-75
-    resetButton.frame.origin.y = view.bounds.size.height-50
+
+    resetButton.titleLabel?.adjustsFontSizeToFitWidth = true;
+    resetButton.frame.origin.x = view.bounds.size.width-resetButton.frame.width+5
+    resetButton.frame.origin.y = view.bounds.size.height-resetButton.frame.height
     resetButton.setTitle("restart", for: .normal)
+    resetButton.titleLabel?.textAlignment = .right
     resetButton.setTitleColor(UIColor(red: 45.0/255.0, green: 45.0/255.0, blue: 45.0/255.0, alpha: 0.6), for: .normal)
     resetButton.setTitleColor(UIColor(red: 255.0/255.0, green: 255.0/255.0, blue: 255.0/255.0, alpha: 0.6), for: .highlighted)
-    resetButton.contentEdgeInsets = UIEdgeInsetsMake(20,0,0,20)
+    resetButton.contentEdgeInsets = UIEdgeInsetsMake(20,0,0,0)
     resetButton.addTarget(self, action: #selector(NumberTileGameViewController.reset), for: .touchUpInside)
     view.addSubview(resetButton)
 

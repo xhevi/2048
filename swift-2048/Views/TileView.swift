@@ -29,12 +29,23 @@ class TileView : UIView {
     delegate = d
     numberLabel = UILabel(frame: CGRect(x: 0, y: 0, width: width, height: width))
     numberLabel.textAlignment = NSTextAlignment.center
-    if #available(iOS 8.2, *) {
-        numberLabel.font = UIFont.systemFont(ofSize: 25, weight: UIFontWeightBlack)
+    
+    if (UIDevice.current.userInterfaceIdiom == .pad) {
+        if #available(iOS 8.2, *) {
+            numberLabel.font = UIFont.systemFont(ofSize: 55, weight: UIFontWeightBlack)
+        } else {
+            // Fallback on earlier versions
+            numberLabel.font = UIFont.systemFont(ofSize: 55)
+        }
     } else {
-        // Fallback on earlier versions
-        numberLabel.font = UIFont.systemFont(ofSize: 28)
+        if #available(iOS 8.2, *) {
+            numberLabel.font = UIFont.systemFont(ofSize: 25, weight: UIFontWeightBlack)
+        } else {
+            // Fallback on earlier versions
+            numberLabel.font = UIFont.systemFont(ofSize: 28)
+        }
     }
+    
     
     super.init(frame: CGRect(x: position.x, y: position.y, width: width, height: width))
     addSubview(numberLabel)

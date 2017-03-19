@@ -54,9 +54,7 @@ class AppearanceProvider: AppearanceProviderProtocol {
   // Provide the font to be used on the number tiles
   func fontForNumbers() -> UIFont {
     if let font = UIFont(name: "SFUIDisplay-Black", size: 27) {
-      print(font)
         return font
-        
     }
     return UIFont.systemFont(ofSize: 27)
   }
