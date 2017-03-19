@@ -11,7 +11,6 @@ import Foundation
 class Settings {
     var gameTime: Int
     var gameTimeText: String
-    let deviceType: String = ".phone"
     init(gameTime: Int, gameTimeText: String) {
         self.gameTime = gameTime
         self.gameTimeText = gameTimeText

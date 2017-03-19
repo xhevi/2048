@@ -92,6 +92,7 @@ class NumberTileGameViewController : UIViewController, GameModelProtocol {
     runTimer()
     resetButton.setTitleColor(UIColor(red: 45.0/255.0, green: 45.0/255.0, blue: 45.0/255.0, alpha: 0.6), for: .normal)
     timerLabel.textColor = UIColor(red: 255.0/255.0, green: 255.0/255.0, blue: 255.0/255.0, alpha: 0.6)
+    hideScreenshotButton()
   }
     
     
@@ -109,6 +110,7 @@ class NumberTileGameViewController : UIViewController, GameModelProtocol {
         if (time == 0) {
             gameover = true
             timer.invalidate()
+            showScreenshotButton()
             timerLabel.text = "time's up"
             timerLabel.textColor = UIColor(red: 45.0/255.0, green: 45.0/255.0, blue: 45.0/255.0, alpha: 0.6)
             self.followUpLost(msg: "time's up")
@@ -125,8 +127,57 @@ class NumberTileGameViewController : UIViewController, GameModelProtocol {
         return String(format:"%i:%02i", minutes, seconds)
     }
     
-    
+    // Function to display screenshot button on gameover
+    let screenshotButton = UIButton(frame: CGRect(x: 0, y: 0, width: 130, height: 50))
 
+
+    
+    func showScreenshotButton() {
+        screenshotButton.isHidden = false
+        screenshotButton.isUserInteractionEnabled = true
+        screenshotButton.titleLabel?.adjustsFontSizeToFitWidth = true;
+        screenshotButton.frame.origin.x = resetButton.frame.origin.x-screenshotButton.frame.width+20 // there is 10pt padding
+        screenshotButton.frame.origin.y = resetButton.frame.origin.y
+        screenshotButton.contentEdgeInsets = UIEdgeInsetsMake(20,10,0,10)
+        screenshotButton.setTitle("screenshot", for: .normal)
+        screenshotButton.setTitle("saved!", for: .highlighted)
+        screenshotButton.titleLabel?.textAlignment = .right
+        screenshotButton.setTitleColor(UIColor(red: 45.0/255.0, green: 45.0/255.0, blue: 45.0/255.0, alpha: 0.6), for: .normal)
+        screenshotButton.setTitleColor(UIColor(red: 255.0/255.0, green: 255.0/255.0, blue: 255.0/255.0, alpha: 0.6), for: .highlighted)
+        screenshotButton.addTarget(self, action: #selector(NumberTileGameViewController.captureScreen), for: .touchUpInside)
+        if (UIDevice.current.userInterfaceIdiom == .pad) {
+            if #available(iOS 8.2, *) {
+                screenshotButton.titleLabel!.font =  UIFont.systemFont(ofSize: 37, weight: UIFontWeightHeavy)
+            } else {
+                // Fallback on earlier versions
+                screenshotButton.titleLabel!.font =  UIFont.systemFont(ofSize: 37)
+            }
+        } else {
+            if #available(iOS 8.2, *) {
+                screenshotButton.titleLabel!.font =  UIFont.systemFont(ofSize: 17, weight: UIFontWeightHeavy)
+            } else {
+                // Fallback on earlier versions
+                screenshotButton.titleLabel!.font =  UIFont.systemFont(ofSize: 18)
+            }
+        }
+        view.addSubview(screenshotButton)
+
+    }
+    
+    func captureScreen() {
+        UIGraphicsBeginImageContextWithOptions(view.bounds.size, false, UIScreen.main.scale)
+        view.layer.render(in: UIGraphicsGetCurrentContext()!)
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+    
+        UIImageWriteToSavedPhotosAlbum(image!, nil, nil, nil)
+    }
+    
+    func hideScreenshotButton() {
+        screenshotButton.isUserInteractionEnabled = false
+        screenshotButton.isHidden = true
+    }
+    
   func setupGame() {
     let vcHeight = view.bounds.size.height
     let vcWidth = view.bounds.size.width
@@ -164,13 +215,42 @@ class NumberTileGameViewController : UIViewController, GameModelProtocol {
     f.origin.y = yPositionToCenterView(gameboard)
     gameboard.frame = f
 
+    // Reset game button styling and adding to view
+    if (UIDevice.current.userInterfaceIdiom == .pad) {
+        if #available(iOS 8.2, *) {
+            resetButton.titleLabel!.font =  UIFont.systemFont(ofSize: 37, weight: UIFontWeightHeavy)
+        } else {
+            // Fallback on earlier versions
+            resetButton.titleLabel!.font =  UIFont.systemFont(ofSize: 37)
+        }
+    } else {
+        if #available(iOS 8.2, *) {
+            resetButton.titleLabel!.font =  UIFont.systemFont(ofSize: 17, weight: UIFontWeightHeavy)
+        } else {
+            // Fallback on earlier versions
+            resetButton.titleLabel!.font =  UIFont.systemFont(ofSize: 18)
+        }
+    }
+    
+    resetButton.titleLabel?.adjustsFontSizeToFitWidth = true;
+    resetButton.frame.origin.x = view.bounds.size.width-resetButton.frame.width+5
+    resetButton.frame.origin.y = view.bounds.size.height-resetButton.frame.height
+    resetButton.setTitle("restart", for: .normal)
+    resetButton.titleLabel?.textAlignment = .right
+    resetButton.setTitleColor(UIColor(red: 45.0/255.0, green: 45.0/255.0, blue: 45.0/255.0, alpha: 0.6), for: .normal)
+    resetButton.setTitleColor(UIColor(red: 255.0/255.0, green: 255.0/255.0, blue: 255.0/255.0, alpha: 0.6), for: .highlighted)
+    resetButton.contentEdgeInsets = UIEdgeInsetsMake(20,0,0,0)
+    resetButton.addTarget(self, action: #selector(NumberTileGameViewController.reset), for: .touchUpInside)
+    view.addSubview(resetButton)
+    
+    
     // Countdown timer styling and adding to view and starting it
     timerLabel.textAlignment = .left
     timerLabel.adjustsFontSizeToFitWidth = true;
     timerLabel.textColor = UIColor(red: 255.0/255.0, green: 255.0/255.0, blue: 255.0/255.0, alpha: 0.6)
     timerLabel.text = gameSettings.gameTimeText
     timerLabel.frame.origin.x = 10
-    timerLabel.frame.origin.y = view.bounds.size.height-30
+    timerLabel.frame.origin.y = resetButton.frame.origin.y+20
     if (UIDevice.current.userInterfaceIdiom == .pad) {
         if #available(iOS 8.2, *) {
             timerLabel.font =  UIFont.systemFont(ofSize: 37, weight: UIFontWeightHeavy)
@@ -191,36 +271,6 @@ class NumberTileGameViewController : UIViewController, GameModelProtocol {
     view.addSubview(timerLabel)
     runTimer()
     
-    
-    
-    // Reset game button styling and adding to view
-    if (UIDevice.current.userInterfaceIdiom == .pad) {
-        if #available(iOS 8.2, *) {
-            resetButton.titleLabel!.font =  UIFont.systemFont(ofSize: 37, weight: UIFontWeightHeavy)
-        } else {
-            // Fallback on earlier versions
-            resetButton.titleLabel!.font =  UIFont.systemFont(ofSize: 37)
-        }
-    } else {
-        if #available(iOS 8.2, *) {
-            resetButton.titleLabel!.font =  UIFont.systemFont(ofSize: 17, weight: UIFontWeightHeavy)
-        } else {
-            // Fallback on earlier versions
-            resetButton.titleLabel!.font =  UIFont.systemFont(ofSize: 18)
-        }
-    }
-
-    resetButton.titleLabel?.adjustsFontSizeToFitWidth = true;
-    resetButton.frame.origin.x = view.bounds.size.width-resetButton.frame.width+5
-    resetButton.frame.origin.y = view.bounds.size.height-resetButton.frame.height
-    resetButton.setTitle("restart", for: .normal)
-    resetButton.titleLabel?.textAlignment = .right
-    resetButton.setTitleColor(UIColor(red: 45.0/255.0, green: 45.0/255.0, blue: 45.0/255.0, alpha: 0.6), for: .normal)
-    resetButton.setTitleColor(UIColor(red: 255.0/255.0, green: 255.0/255.0, blue: 255.0/255.0, alpha: 0.6), for: .highlighted)
-    resetButton.contentEdgeInsets = UIEdgeInsetsMake(20,0,0,0)
-    resetButton.addTarget(self, action: #selector(NumberTileGameViewController.reset), for: .touchUpInside)
-    view.addSubview(resetButton)
-
     
     // Add to game state
     view.addSubview(gameboard)
@@ -252,6 +302,7 @@ class NumberTileGameViewController : UIViewController, GameModelProtocol {
     func followUpWon() {
         gameover = true
         timer.invalidate()
+        showScreenshotButton()
         timerLabel.textColor = UIColor(red: 45.0/255.0, green: 45.0/255.0, blue: 45.0/255.0, alpha: 0.6)
         
         // TODO: alert delegate we won
@@ -284,7 +335,9 @@ class NumberTileGameViewController : UIViewController, GameModelProtocol {
     if m.userHasLost() {
         gameover = true
         timer.invalidate()
+        showScreenshotButton()
         timerLabel.textColor = UIColor(red: 45.0/255.0, green: 45.0/255.0, blue: 45.0/255.0, alpha: 0.6)
+        showScreenshotButton()
         followUpLost(msg: "no more moves")
     }
   }
