@@ -109,7 +109,7 @@ class NumberTileGameViewController : UIViewController, GameModelProtocol {
         if (time == 0) {
             gameover = true
             timer.invalidate()
-            timerLabel.text = "game over"
+            timerLabel.text = "time's up"
             timerLabel.textColor = UIColor(red: 45.0/255.0, green: 45.0/255.0, blue: 45.0/255.0, alpha: 0.6)
             self.followUpLost(msg: "time's up")
             return
@@ -278,6 +278,9 @@ class NumberTileGameViewController : UIViewController, GameModelProtocol {
 
     // At this point, the user may lose
     if m.userHasLost() {
+        gameover = true
+        timer.invalidate()
+        timerLabel.textColor = UIColor(red: 45.0/255.0, green: 45.0/255.0, blue: 45.0/255.0, alpha: 0.6)
         followUpLost(msg: "no more moves")
     }
   }
