@@ -252,7 +252,6 @@ class NumberTileGameViewController : UIViewController, GameModelProtocol {
     func followUpWon() {
         gameover = true
         timer.invalidate()
-        timerLabel.text = "you won"
         timerLabel.textColor = UIColor(red: 45.0/255.0, green: 45.0/255.0, blue: 45.0/255.0, alpha: 0.6)
         
         // TODO: alert delegate we won
